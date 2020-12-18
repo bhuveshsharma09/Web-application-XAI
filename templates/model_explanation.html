@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>XAI</title>
+    <link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Alfa+Slab+One">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Asap+Condensed">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Barlow+Condensed">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter:400,700">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700">
+    <link rel="stylesheet" href="static/fonts/ionicons.min.css">
+    <link rel="stylesheet" href="static/fonts/simple-line-icons.min.css">
+    <link rel="stylesheet" href="static/css/Article-Clean.css">
+    <link rel="stylesheet" href="static/css/Bootstrap-4---Full-Video-Background-v2.css">
+    <link rel="stylesheet" href="static/css/Drag-Drop-File-Input-Upload.css">
+    <link rel="stylesheet" href="static/css/Header-Blue.css">
+    <link rel="stylesheet" href="static/css/Header-Dark.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.2.0/aos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
+    <link rel="stylesheet" href="static/css/Login-Form-Dark.css">
+    <link rel="stylesheet" href="static/css/Registration-Form-with-Photo.css">
+    <link rel="stylesheet" href="static/css/smoothproducts.css">
+    <link rel="stylesheet" href="static/css/video-background.css">
+    <link rel="stylesheet" href="static/css/Video-Parallax-Background-v2.css">
+</head>
+
+<body>
+   {% include "navbar.html" %}
+    <div>
+        <div class="header-blue">
+            <div class="container hero">
+                <div class="row">
+                    <div class="col-12 col-lg-6 col-xl-5 offset-xl-1">
+                        <h1>The revolution is here.</h1>
+                        <p>Mauris egestas tellus non ex condimentum, ac ullamcorper sapien dictum. Nam consequat neque quis sapien viverra convallis. In non tempus lorem. </p><button class="btn btn-light btn-lg action-button" type="button">Learn More</button></div>
+                    <div
+                        class="col-md-5 col-lg-5 offset-lg-1 offset-xl-0 d-none d-lg-block phone-holder">
+                        <div class="phone-mockup">
+                            <div class="screen"></div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="article-clean" style="height: 308px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-lg-6 col-xl-5 offset-xl-1" style="height: 245px;">
+                    <h1>DATA......</h1>
+                    <p>Mauris egestas tellus non ex condimentum, ac ullamcorper sapien dictum. Nam consequat neque quis sapien viverra convallis. In non tempus lorem. </p><button class="btn btn-light btn-lg action-button" type="button">Learn More</button></div>
+                <div
+                    class="col-md-5 col-lg-5 offset-lg-1 offset-xl-0 d-none d-lg-block phone-holder">
+                    <div class="phone-mockup">
+                        <div class="screen"></div>
+                    </div>
+
+
+
+
+
+
+
+                    <form id="upload-form" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+                <div class="illustration"><i class="icon ion-ios-paper-outline"></i></div>
+                <strong>1) Chose model file:</strong><br>
+                <input   type="file" name="file"  accept="application/pdf/*" multiple>
+                <br>
+                     <strong>1) Chose x test file:</strong><br>
+                <input   type="file" name="file"  accept="application/pdf/*" multiple>
+                <br>
+                     <strong>1) Chose y test file:</strong><br>
+                <input   type="file" name="file"  accept="application/pdf/*" multiple>
+                <br>
+                <br>
+                <strong>Explanation Type</strong><br>
+                <select name="select1" class="form-control"> <!-- note the name -->
+                    <option value="GL">Global Explanation</option>
+                    <option value="LL">Local Explanation</option>
+
+                </select>
+                <br>
+                <br>
+                <div class="form-group"><input type="submit" value="Upload" class="btn btn-primary btn-block" id="upload-button"></div>
+                </form>
+
+
+
+
+
+
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+    <footer class="page-footer dark">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-3">
+                    <h5>Get started</h5>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Sign up</a></li>
+                        <li><a href="#">Downloads</a></li>
+                    </ul>
+                </div>
+                <div class="col-sm-3">
+                    <h5>About us</h5>
+                    <ul>
+                        <li><a href="#">Company Information</a></li>
+                        <li><a href="#">Contact us</a></li>
+                        <li><a href="#">Reviews</a></li>
+                    </ul>
+                </div>
+                <div class="col-sm-3">
+                    <h5>Support</h5>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Help desk</a></li>
+                        <li><a href="#">Forums</a></li>
+                    </ul>
+                </div>
+                <div class="col-sm-3">
+                    <h5>Legal</h5>
+                    <ul>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Terms of Use</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <p>© 2020 Copyright Text</p>
+        </div>
+    </footer>
+    </div>
+    <script src="static/js/jquery.min.js"></script>
+    <script src="static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="static/js/bs-init.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.2.0/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
+    <script src="static/js/smoothproducts.min.js"></script>
+    <script src="static/js/theme.js"></script>
+    <script src="static/js/Video-Parallax-Background-v2.js"></script>
+</body>
+
+</html>

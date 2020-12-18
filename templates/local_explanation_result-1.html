@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>XAI</title>
+    <link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Alfa+Slab+One">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Asap+Condensed">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Barlow+Condensed">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter:400,700">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700">
+    <link rel="stylesheet" href="static/fonts/ionicons.min.css">
+    <link rel="stylesheet" href="static/fonts/simple-line-icons.min.css">
+    <link rel="stylesheet" href="static/css/Article-Clean.css">
+    <link rel="stylesheet" href="static/css/Bootstrap-4---Full-Video-Background-v2.css">
+    <link rel="stylesheet" href="static/css/Drag-Drop-File-Input-Upload.css">
+    <link rel="stylesheet" href="static/css/Header-Blue.css">
+    <link rel="stylesheet" href="static/css/Header-Dark.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
+    <link rel="stylesheet" href="static/css/Login-Form-Dark.css">
+    <link rel="stylesheet" href="static/css/Registration-Form-with-Photo.css">
+    <link rel="stylesheet" href="static/css/smoothproducts.css">
+    <link rel="stylesheet" href="static/css/video-background.css">
+    <link rel="stylesheet" href="static/css/Video-Parallax-Background-v2.css">
+</head>
+
+<body>
+{% include "navbar.html" %}    <div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12"></div>
+            </div>
+        </div>
+    </div>
+    <div></div>
+    <div>
+        <div class="container">
+            <div class="row" style="width: 1110px;height: 545px;">
+                <div class="col-md-6" style="padding: -51px;margin: 1px;width: 557px;">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Column 1</th>
+                                    <th>Column 2</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+
+
+                             <form id="upload-form" action="{{ url_for('upload2') }}" method="POST" enctype="multipart/form-data">
+
+                            {% for key, value in res.items() %}
+
+
+
+                                 <tr>
+
+                                        <td>{{key}}<input name = "{{key}}" type="number" value="{{value }}"></td>
+                                        </tr>
+                           {% endfor %}
+
+
+
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container text-center">
+        <input type="submit" value="Upload" class="btn btn-primary btn-block" id="upload-button">
+
+        <button class="btn btn-primary text-center" type="button" style="padding: 7px;margin: 51px;background: rgb(255,0,168);">Explain</button>
+    </form>
+
+    </div>
+    <script src="static/js/jquery.min.js"></script>
+    <script src="static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="static/js/bs-init.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
+    <script src="static/js/smoothproducts.min.js"></script>
+    <script src="static/js/theme.js"></script>
+    <script src="static/js/Video-Parallax-Background-v2.js"></script>
+</body>
+
+</html>
