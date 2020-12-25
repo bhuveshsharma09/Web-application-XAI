@@ -9,6 +9,7 @@ ff = []
 
 import plotly.graph_objects as go # or plotly.express as px
 
+import mpld3
 
 fig = go.Figure(
     data=[go.Bar(x=[1, 2, 3], y=[1, 3, 2])],
@@ -281,7 +282,7 @@ def upload2():
     print('hh ',hh)
     for file in request.files.getlist("gg"):
         print(file)
-    print('end')
+    print(list(X_data.columns))
     
     
     series = pd.Series(hh) 
@@ -295,11 +296,26 @@ def upload2():
     # load JS visualization code to notebook
     shap.initjs()
     
-    plt.style.use("_classic_test_patch")  
-    
+    #plt.style.use("_classic_test_patch")  
+    #plt.clf()
     # visualize the first prediction's explanation (use matplotlib=True to avoid Javascript)
     #shap.force_plot(explainer.expected_value, shap_values[1,:], series, matplotlib=True, figsize=(22, 4))
-    shap.force_plot(explainer.expected_value, shap_values[10,:], series)             
+    #shap.force_plot(explainer.expected_value, shap_values[10,:],  \
+    #                series,feature_names=X_data.columns,\
+     #               matplotlib=True, show=False)   
+    
+    
+    
+    
+   # plt.savefig("gg.png",dpi=150, bbox_inches='tight')
+        
+    #yyy = shap.getjs()
+    '''
+    oo = yyy.matplotlib
+    p = yyy.html  
+    yyy_str = mpld3.fig_to_html(p)  
+    print('dfsdfsdf ',p)     
+    '''
     series = series.tolist()
     print('im a he ',series)
     pp = []
@@ -308,7 +324,6 @@ def upload2():
             j = float(j)
             pp.append(j)
 
-    
     
     
     
@@ -333,19 +348,46 @@ def upload2():
                                  discretize_continuous=False,
                                  kernel_width=0.2) 
     
-    exp = explainer.explain_instance(series, model.predict, )
+    exp = explainer.explain_instance(series, model.predict )
                                      
     print(exp.local_pred)
     
-    exp.as_pyplot_figure()
+    fig = exp.as_pyplot_figure(label = list(X_data.columns))
+    
+    fig_2 = exp.as_html(labels = list(X_data.columns))
+    #print('dddd ',fig_2)
+    
     plt.tight_layout()
-    plt.savefig('static/img/new34_plot.png')
-    plt.close()
+    #fig = plt.figure(figsize = (18,8))
+    
+#    plt.tight_layout()
+#    #plt.boxplot(bank_data.transpose())
+#
+#    #Add titles to the chart and axes
+#    plt.hist(bank_data.transpose(), bins = 50)
+#    plt.title('Boxplot of Bank Stock Prices (5Y Lookback)')
+#    plt.xlabel('Bank')
+#    plt.ylabel('Stock Prices')
+#        
+    #mpld3.show(fig)
+    #
+    html_str = mpld3.fig_to_html(fig)
+    Html_file= open("templates/lime.html","w")
+    Html_file.write(html_str)
+    Html_file.close()
+    #
+    
+    
+    
+    
+    
+   # plt.savefig('static/img/new34_plot.png')
+    #plt.close()
     
        
         
     
-    return render_template('local_result.html', LIME = "static/img/new34_plot.png")
+    return render_template('local_result.html', LIME = html_str, SH = fig_2, gh = html_str)
 
 
 
