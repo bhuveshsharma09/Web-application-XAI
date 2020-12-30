@@ -54,7 +54,15 @@ app = Flask(__name__)
 ee = dash.Dash(__name__,
     server=app,
     url_base_pathname='/ee/')
+jj = dash.Dash(__name__,
+    server=app,
+    url_base_pathname='/jj/')
+qq = dash.Dash(__name__,
+    server=app,
+    url_base_pathname='/qq/')
 ee.layout = html.Div([dcc.Graph(figure=fig)])
+jj.layout = html.Div([dcc.Graph(figure=fig)])
+qq.layout = html.Div([dcc.Graph(figure=fig)])
 
 
 
@@ -77,6 +85,10 @@ def features():
 @app.route("/model_explanation")
 def model_explanation():
     return render_template("model_explanation.html")
+
+@app.route("/data_explanation")
+def data_explanation():
+    return render_template("data_explanation.html")
 
 def permutation_importance(model,X_data,y_data):
     perm = PermutationImportance(model).fit(X_data, y_data)
@@ -241,7 +253,7 @@ def upload():
         
         
         return render_template('model_explanation_result.html',PI = PI, ICE = ICE , SH = "static/img/new_plot.png", SM = "static/img/new2_plot.png")
-    else:
+    if 'WI' in dropdown_selection:
         
         mean_list = []
         features = X_data.columns.tolist()
@@ -255,6 +267,13 @@ def upload():
         
         
         return render_template('local_explanation_result-1.html', res = res)
+    
+    if 'LL' in dropdown_selection:
+        None
+        
+        
+    if 'BD' in dropdown_selection:
+        None
 
 
 
@@ -388,6 +407,147 @@ def upload2():
         
     
     return render_template('local_result.html', LIME = html_str, SH = fig_2, gh = html_str)
+
+
+
+
+
+
+#data explanation----------------------
+@app.route("/upload_3", methods=['POST'])
+def upload_3():
+    print('eer  0', request.form)
+    dropdown_selection = str(request.form)
+    dropdown_selection = dropdown_selection.split()
+    dropdown_selection = dropdown_selection[1]
+    
+    print(dropdown_selection, "  nuna bhai")
+    
+    
+    target = 'images/'
+    print('tt' , target)
+
+    if not os.path.isdir(target):
+        os.mkdir(target)
+    global ff
+    ff= []
+    for file in request.files.getlist("file"):
+        print(file)
+        filename = file.filename
+        destination = "/".join([target, filename])
+        print('des',destination)
+        file.save(destination)
+        ff.append(destination)
+   
+        
+    mypath = os. getcwd()
+    onlyfiles = [os.path.join(mypath, f) for f in os.listdir(mypath) if os.path.isfile(os.path.join(mypath, f))]
+    
+
+    print('raJA ',ff)
+    import warnings
+    warnings.filterwarnings("ignore")
+
+    data1 = pd.read_csv(ff[0])
+    print('datagg ',data1)
+    data = data1[['bedrooms', 'bathrooms', 'sqft_living',
+       'sqft_lot', 'floors', 'waterfront', 'view', 'condition', 'grade',
+       'sqft_above', 'sqft_basement', 'yr_built', 'yr_renovated', 'zipcode',
+       'lat', 'long', 'sqft_living15', 'sqft_lot15']]
+    yw = data1['price']
+    
+        
+    if 'PCA' in dropdown_selection:
+        print("pca ki jai")
+        from sklearn.preprocessing import StandardScaler
+        scaler = StandardScaler()
+        scaler.fit(data)
+        scaled_data = scaler.transform(data)
+        
+        import plotly.express as px
+        from sklearn.decomposition import PCA
+        
+        
+        pca = PCA(n_components=2)
+        components = pca.fit_transform(scaled_data)
+        
+        pca3 = PCA(n_components=3)
+        components_3 = pca3.fit_transform(scaled_data)
+        
+        total_var = pca.explained_variance_ratio_.sum() * 100
+        
+        fig_3 = px.scatter_3d(
+            components_3, x=0, y=1, z=2, color=yw,
+            title=f'Total Explained Variance: {total_var:.2f}%',
+            labels={'0': 'PC 1', '1': 'PC 2', '2': 'PC 3'}
+        )
+        
+        fig_3.show()
+        #need to upload csv only
+        
+        fig = px.scatter(components, x=0, y=1, color=yw)
+        fig.show()
+        
+#        surface = go.Surface(x=pdp.columns, 
+#                         y=pdp.index, 
+#                         z=pdp.values)
+#    
+#        fig = go.Figure(surface)
+#        fig.show()
+        jj.layout = html.Div([dcc.Graph(figure=fig)])
+        qq.layout = html.Div([dcc.Graph(figure=fig_3)])
+        print("done")
+        
+
+    
+        
+
+        
+        
+        
+        
+        
+        return render_template('pca_result.html',PCA = jj.index(), PCAA = qq.index())
+    if 'TSNE' in dropdown_selection:
+        None
+            
+        
+        
+    
+    if 'PP' in dropdown_selection:
+        None
+        
+        
+    if 'DE' in dropdown_selection:
+        None
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
