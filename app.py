@@ -6,7 +6,13 @@ from werkzeug.utils import secure_filename
 import shap
 global ff
 ff = []
+import queue
 
+import logging
+import threading
+from threading import Thread
+
+import time
 import plotly.graph_objects as go # or plotly.express as px
 
 import mpld3
@@ -21,7 +27,6 @@ fig = go.Figure(
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-
 
 
 
@@ -46,6 +51,32 @@ import base64
 from io import BytesIO
 
 
+
+
+
+
+
+class ThreadWithReturnValue(Thread):
+    def __init__(self, group=None, target=None, name=None,
+                 args=(), kwargs={}, Verbose=None):
+        Thread.__init__(self, group, target, name, args, kwargs)
+        self._return = None
+    def run(self):
+        print(type(self._target))
+        if self._target is not None:
+            self._return = self._target(*self._args,
+                                                **self._kwargs)
+    def join(self):
+        Thread.join(self)
+        return self._return
+
+
+
+
+
+
+
+
 app = Flask(__name__)
 
 
@@ -60,6 +91,25 @@ jj = dash.Dash(__name__,
 qq = dash.Dash(__name__,
     server=app,
     url_base_pathname='/qq/')
+
+new_pca = dash.Dash(__name__,
+    server=app,
+    url_base_pathname='/new_pca/')
+
+
+local_explain = dash.Dash(__name__,
+    server=app,
+    url_base_pathname='/local_explain/')
+
+
+
+
+
+local_explain.layout= html.Div([dcc.Graph(figure=fig)])
+
+
+new_pca.layout = html.Div([dcc.Graph(figure=fig)])
+
 ee.layout = html.Div([dcc.Graph(figure=fig)])
 jj.layout = html.Div([dcc.Graph(figure=fig)])
 qq.layout = html.Div([dcc.Graph(figure=fig)])
@@ -272,9 +322,29 @@ def upload():
         None
         
         
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
     if 'BD' in dropdown_selection:
         None
-
+#-----------------------------------------------------------------------------------------------------------
 
 
 
@@ -413,6 +483,160 @@ def upload2():
 
 
 
+
+
+
+
+
+
+
+
+
+
+def thread_function(data1, data, yw):
+    print("pca ki jai")
+    import plotly_express as px
+    import dash
+    import dash_html_components as html
+    import dash_core_components as dcc
+    from dash.dependencies import Input, Output
+    
+    
+    wwww = dash.Dash(__name__,
+    server=app,
+    url_base_pathname='/wwww/')
+
+
+
+
+
+
+    fig = go.Figure(
+        data=[go.Bar(x=[1, 2, 3], y=[1, 3, 2])],
+        layout=go.Layout(
+            title=go.layout.Title(text="A Figure Specified By A Graph Object")
+        )
+    )
+
+
+    wwww.layout = html.Div([dcc.Graph(figure=fig)])
+    
+    
+    
+            
+   # tips = px.data.tips()
+    col_options = [dict(label=x, value=x) for x in data1.columns]
+    dimensions = ['color']
+            
+            
+    
+    
+    
+    
+    
+    
+    ###pca
+    from sklearn.preprocessing import StandardScaler
+    scaler = StandardScaler()
+    scaler.fit(data)
+    scaled_data = scaler.transform(data)
+    
+    import plotly.express as px
+    from sklearn.decomposition import PCA
+    
+    
+    pca = PCA(n_components=2)
+    components = pca.fit_transform(scaled_data)
+    
+    pca3 = PCA(n_components=3)
+    components_3 = pca3.fit_transform(scaled_data)
+    
+    total_var = pca.explained_variance_ratio_.sum() * 100
+    
+    fig_3 = px.scatter_3d(
+        components_3, x=0, y=1, z=2, color=yw,
+        title=f'Total Explained Variance: {total_var:.2f}%',
+        labels={'0': 'PC 1', '1': 'PC 2', '2': 'PC 3'}
+    )
+    
+    fig_3.show()
+    #need to upload csv only
+    
+    fig = px.scatter(components, x=0, y=1, color=yw)
+    fig.show()
+    ###
+    
+    wwww.layout = html.Div(
+        [
+            html.H1("Demo"),
+            html.Div(
+                [
+                    html.P([d + ":", dcc.Dropdown(id=d, options=col_options)])
+                    for d in dimensions
+                ],
+                style={"width": "25%", "float": "left"},
+            ),
+            dcc.Graph(id="graph", style={"width": "75%", "display": "inline-block"}),
+        ]
+    )
+    
+    print('dimsum ', dimensions)
+    @wwww.callback(Output("graph", "figure"), [Input(d, "value") for d in dimensions])
+    def make_figure( color):
+        print('ccc ',color)
+        if color == None:
+            my_color = None
+        else:
+            my_color = data1[color]
+        return px.scatter(
+            components,
+            x = 0,
+            y = 1,
+            color=my_color,
+            
+            height=700,
+        )
+
+    
+    
+    
+    
+    
+   # jj.layout = html.Div([dcc.Graph(figure=fig)])
+    #www.layout = html.Div([dcc.Graph(figure=fig_3)])
+    print("done")
+    
+    return wwww.index()
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+   
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
 #data explanation----------------------
 @app.route("/upload_3", methods=['POST'])
 def upload_3():
@@ -422,6 +646,21 @@ def upload_3():
     dropdown_selection = dropdown_selection[1]
     
     print(dropdown_selection, "  nuna bhai")
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
     
     
     target = 'images/'
@@ -449,16 +688,77 @@ def upload_3():
     warnings.filterwarnings("ignore")
 
     data1 = pd.read_csv(ff[0])
-    print('datagg ',data1)
-    data = data1[['bedrooms', 'bathrooms', 'sqft_living',
-       'sqft_lot', 'floors', 'waterfront', 'view', 'condition', 'grade',
-       'sqft_above', 'sqft_basement', 'yr_built', 'yr_renovated', 'zipcode',
-       'lat', 'long', 'sqft_living15', 'sqft_lot15']]
-    yw = data1['price']
+    #print('datagg ',data1)
+   
+    
+#    dim = data = data1[['bedrooms', 'bathrooms', 'sqft_living',
+#       'sqft_lot', 'floors', 'waterfront', 'view', 'condition', 'grade',
+#       'sqft_above', 'sqft_basement', 'yr_built', 'yr_renovated', 'zipcode',
+#       'lat', 'long', 'sqft_living15', 'sqft_lot15', 'price']]
     
         
     if 'PCA' in dropdown_selection:
+        input_list = request.form.to_dict()
+    
+    
+    
+        #data['some_key'] = "Some Value"
+        print('input values ', input_list)
+        print('input values ', type(input_list))
+        
+        
+        
+        target_name = input_list['lname']
+        
+        
+        
+        target_name = target_name.split("'")[1]
+        print('taget ss ',target_name)
+        print('taget ss ',type(target_name))
+        
+        
+        feature_name = input_list['features']
+        feature_name = feature_name.split(",")
+        uuu=[]
+        for i in range(0,len(feature_name)):
+            uuu.append(feature_name[i].split("'")[1])
+            
+        print('nuna yadav ', uuu)
+        
+        data = data1[uuu]
+        yw = data1[target_name]
+    
+        
+        #twrv = ThreadWithReturnValue(target=thread_function, args=(data1,data,yw))
+        #twrv.start()
+        #value = twrv.join()
+        #data_explanation_thread = threading.Thread()
+        #data_explanation_thread.start()
+        #value = data_explanation_thread.join()
+        #que = queue.Queue()
+        #value = que.get()
+        #print(value)
+        #value = thread_function(data1,data,yw)
+        
         print("pca ki jai")
+        import plotly_express as px
+        import dash
+        import dash_html_components as html
+        import dash_core_components as dcc
+        from dash.dependencies import Input, Output
+                
+       # tips = px.data.tips()
+        col_options = [dict(label=x, value=x) for x in data1.columns]
+        dimensions = ['color']
+                
+                
+        
+        
+        
+        
+        
+        
+        ###pca
         from sklearn.preprocessing import StandardScaler
         scaler = StandardScaler()
         scaler.fit(data)
@@ -487,16 +787,48 @@ def upload_3():
         
         fig = px.scatter(components, x=0, y=1, color=yw)
         fig.show()
+        ###
         
-#        surface = go.Surface(x=pdp.columns, 
-#                         y=pdp.index, 
-#                         z=pdp.values)
-#    
-#        fig = go.Figure(surface)
-#        fig.show()
+        new_pca.layout = html.Div(
+            [
+                html.H1("Demo"),
+                html.Div(
+                    [
+                        html.P([d + ":", dcc.Dropdown(id=d, options=col_options)])
+                        for d in dimensions
+                    ],
+                    style={"width": "25%", "float": "left"},
+                ),
+                dcc.Graph(id="graph", style={"width": "75%", "display": "inline-block"}),
+            ]
+        )
+        
+        print('dimsum ', dimensions)
+        @new_pca.callback(Output("graph", "figure"), [Input(d, "value") for d in dimensions])
+        def make_figure( color):
+            print('ccc ',color)
+            if color == None:
+                my_color = None
+            else:
+                my_color = data1[color]
+            return px.scatter(
+                components,
+                x = 0,
+                y = 1,
+                color=my_color,
+                
+                height=700,
+            )
+
+        
+        
+        
+        
+        
         jj.layout = html.Div([dcc.Graph(figure=fig)])
         qq.layout = html.Div([dcc.Graph(figure=fig_3)])
         print("done")
+        
         
 
     
@@ -507,7 +839,7 @@ def upload_3():
         
         
         
-        return render_template('pca_result.html',PCA = jj.index(), PCAA = qq.index())
+        return render_template('pca_result.html',PCA = new_pca.index(), PCAA = new_pca.index())
     if 'TSNE' in dropdown_selection:
         None
             
@@ -516,10 +848,72 @@ def upload_3():
     
     if 'PP' in dropdown_selection:
         None
+        None
+        #already has model, Xdata and ydata
+        #
+        import plotly_express as px
+        import dash
+        import dash_html_components as html
+        import dash_core_components as dcc
+        from dash.dependencies import Input, Output
+
+                
+       # tips = px.data.tips()
+        col_options = [dict(label=x, value=x) for x in data1.columns]
+        dimensions = ["x", "y", "color", "facet_col", "facet_row"]
+                
+
+        
+        
+        local_explain.layout = html.Div(
+            [
+                html.H1("Demo"),
+                html.Div(
+                    [
+                        html.P([d + ":", dcc.Dropdown(id=d, options=col_options)])
+                        for d in dimensions
+                    ],
+                    style={"width": "25%", "float": "left"},
+                ),
+                dcc.Graph(id="graph", style={"width": "75%", "display": "inline-block"}),
+            ]
+        )
+        
+        
+        @local_explain.callback(Output("graph", "figure"), [Input(d, "value") for d in dimensions])
+        def make_figure2(x, y, color, facet_col, facet_row):
+            return px.scatter(
+                data1,
+                x=x,
+                y=y,
+                color=color,
+                facet_col=facet_col,
+                facet_row=facet_row,
+                
+            )
+
+        
+        
+        
+        
+        
+        
+        
+
+    
+        
+
+        
+        
+        
+        
+        
+        return render_template('local_local_result.html',LL = local_explain.index())
         
         
     if 'DE' in dropdown_selection:
         None
+        
 
 
 
@@ -552,7 +946,7 @@ def upload_3():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True, use_reloader=False)
     #app.run_server(debug=True, use_reloader=False)  # Turn off reloader if inside Jupyter
 
 
