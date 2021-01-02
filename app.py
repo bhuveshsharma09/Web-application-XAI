@@ -4,6 +4,7 @@ import os
 from flask import Flask, flash, request, redirect, url_for
 from werkzeug.utils import secure_filename
 import shap
+import plotly_express as px
 global ff
 ff = []
 import queue
@@ -23,7 +24,8 @@ fig = go.Figure(
         title=go.layout.Title(text="A Figure Specified By A Graph Object")
     )
 )
-
+import io
+import base64
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -97,15 +99,56 @@ new_pca = dash.Dash(__name__,
     url_base_pathname='/new_pca/')
 
 
-local_explain = dash.Dash(__name__,
+local_explain2 = dash.Dash(__name__,
     server=app,
-    url_base_pathname='/local_explain/')
+    url_base_pathname='/local_explain2/')
 
 
 
 
 
-local_explain.layout= html.Div([dcc.Graph(figure=fig)])
+
+
+
+
+
+table_plot = dash.Dash(__name__,
+    server=app,
+    url_base_pathname='/table_plot/')
+
+
+
+
+
+SHAP_plot = dash.Dash(__name__,
+    server=app,
+    url_base_pathname='/SHAP_plot/')
+
+
+
+
+
+SHAP_plot.layout= html.Div([dcc.Graph(figure=fig)])
+
+
+
+
+
+
+table_plot.layout= html.Div([dcc.Graph(figure=fig)])
+
+
+
+
+
+
+
+
+
+
+
+
+local_explain2.layout= html.Div([dcc.Graph(figure=fig)])
 
 
 new_pca.layout = html.Div([dcc.Graph(figure=fig)])
@@ -144,6 +187,29 @@ def permutation_importance(model,X_data,y_data):
     perm = PermutationImportance(model).fit(X_data, y_data)
     PI = eli5.show_weights(perm, feature_names=X_data.columns.tolist())
     return PI
+
+def figure_to_html_img(figure):
+    """ figure to html base64 png image """ 
+    try:
+        tmpfile = io.BytesIO()
+        figure.savefig(tmpfile, format='png')
+        encoded = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+        shap_html = html.Img(src=f"data:image/png;base64, {encoded}")
+        return shap_html
+    except AttributeError:
+        return ""
+###
+
+
+def _force_plot_html(*args):
+    force_plot = shap.force_plot(*args, matplotlib=False)
+    shap_html = f"<head>{shap.getjs()}</head><body>{force_plot.html()}</body>"
+    return html.Iframe(srcDoc=shap_html,
+                       style={"width": "100%", "height": "400px", "border": 2})
+
+
+
+
 
 @app.route("/ee")
 def ind_cond_exp(model_line,X_train,y_data):
@@ -291,8 +357,7 @@ def upload():
         pl.savefig('static/img/new2_plot.png')
         pl.close()
         
-        #dt.score(X_test, predictions)
-        
+       
         
         
         
@@ -320,6 +385,122 @@ def upload():
     
     if 'LL' in dropdown_selection:
         None
+        #table and plots ========================================================
+        import dash
+        from dash.dependencies import Input, Output
+        import dash_table
+        import dash_core_components as dcc
+        import dash_html_components as html
+        import pandas as pd
+        print('in LL')
+        # make graph===============================================================
+        table_plot.layout = html.Div([
+            dash_table.DataTable(
+                id='datatable-interactivity',
+                columns=[
+                    {"name": i, "id": i, "deletable": True, "selectable": True} for i in X_data.columns
+                ],
+                data=X_data.to_dict('records'),
+                editable=True,
+                filter_action="native",
+                sort_action="native",
+                sort_mode="multi",
+                column_selectable="single",
+                row_selectable="single",
+                row_deletable=True,
+                selected_columns=[],
+                selected_rows=[],
+                page_action="native",
+                page_current= 0,
+                page_size= 10,
+            ),
+            html.Div(id='datatable-interactivity-container')
+        ])
+            
+        print('miod LL')
+     
+            
+            
+            
+            
+            
+            
+        @table_plot.callback(
+            Output('datatable-interactivity-container', "children"),
+            Input('datatable-interactivity', "derived_virtual_data"),
+            Input('datatable-interactivity', "derived_virtual_selected_rows"))
+        def update_graphs(rows, derived_virtual_selected_rows):
+            # When the table is first rendered, `derived_virtual_data` and
+            # `derived_virtual_selected_rows` will be `None`. This is due to an
+            # idiosyncrasy in Dash (unsupplied properties are always None and Dash
+            # calls the dependent callbacks when the component is first rendered).
+            # So, if `rows` is `None`, then the component was just rendered
+            # and its value will be the same as the component's dataframe.
+            # Instead of setting `None` in here, you could also set
+            # `derived_virtual_data=df.to_rows('dict')` when you initialize
+            # the component.
+            if derived_virtual_selected_rows is None:
+                derived_virtual_selected_rows = []
+            
+            dff = X_data if rows is None else pd.DataFrame(rows)
+            
+            colors = ['#7FDBFF' if i in derived_virtual_selected_rows else '#0074D9'
+                      for i in range(len(dff))]
+            
+            print('my value',derived_virtual_selected_rows)
+            print('i am row ', X_data.iloc[derived_virtual_selected_rows])
+            print(type(derived_virtual_selected_rows))
+            
+            from shap.plots._force_matplotlib import draw_additive_plot
+
+            
+             #dt.score(X_test, predictions)
+            
+            
+            
+            # train XGBoost model
+            #X,y = shap.datasets.boston()
+            
+            #model = xgboost.train({"learning_rate": 0.01}, xgboost.DMatrix(X, label=y), 100)
+            ttt = X_data.loc[derived_virtual_selected_rows]
+            # explain the model's predictions using SHAP values(same syntax works for LightGBM, CatBoost, and scikit-learn models)
+            explainer = shap.TreeExplainer(model)
+            shap_values = explainer.shap_values(ttt)
+            shap.initjs()
+            
+            plt.style.use("_classic_test_patch")
+            #force_plot = shap.force_plot(explainer.expected_value,
+                                     #    shap_values[0,:],
+                                    #     X_data.iloc[derived_virtual_selected_rows[0],:],
+                                    #     matplotlib=False)
+            
+            
+            
+            
+            bubu = _force_plot_html(explainer.expected_value,
+                                         shap_values,ttt)
+                                         
+            # set show=False to force the figure to be returned
+            #force_plot_mpl = draw_additive_plot(force_plot.data, (20,3), show=False)
+            #return figure_to_html_img(force_plot_mpl)
+            
+            shap_values = explainer.shap_values(X_data)
+            #shap.force_plot(explainer.expected_value, shap_values, X_data)
+            explain_all = _force_plot_html(explainer.expected_value,
+                                         shap_values,X_data)
+            
+            
+            
+            
+            
+            return bubu, explain_all
+                    
+                    
+            
+                
+        return render_template('local_explain_lime.html', LL = table_plot.index())
+                
+        
         
         
         
@@ -682,7 +863,7 @@ def upload_3():
     mypath = os. getcwd()
     onlyfiles = [os.path.join(mypath, f) for f in os.listdir(mypath) if os.path.isfile(os.path.join(mypath, f))]
     
-
+    import pandas as pd
     print('raJA ',ff)
     import warnings
     warnings.filterwarnings("ignore")
@@ -847,27 +1028,20 @@ def upload_3():
         
     
     if 'PP' in dropdown_selection:
-        None
-        None
-        #already has model, Xdata and ydata
-        #
         import plotly_express as px
         import dash
         import dash_html_components as html
         import dash_core_components as dcc
         from dash.dependencies import Input, Output
-
-                
-       # tips = px.data.tips()
+        
         col_options = [dict(label=x, value=x) for x in data1.columns]
         dimensions = ["x", "y", "color", "facet_col", "facet_row"]
-                
-
         
+      
         
-        local_explain.layout = html.Div(
+        local_explain2.layout = html.Div(
             [
-                html.H1("Demo"),
+                html.H1("dashboard"),
                 html.Div(
                     [
                         html.P([d + ":", dcc.Dropdown(id=d, options=col_options)])
@@ -880,8 +1054,13 @@ def upload_3():
         )
         
         
-        @local_explain.callback(Output("graph", "figure"), [Input(d, "value") for d in dimensions])
-        def make_figure2(x, y, color, facet_col, facet_row):
+        @local_explain2.callback(Output("graph", "figure"), [Input(d, "value") for d in dimensions])
+        def make_figure(x, y, color, facet_col, facet_row):
+            if x == None:
+                x = data1[data1.columns[2]]
+            if y == None:
+                y = data1[data1.columns[3]]
+                
             return px.scatter(
                 data1,
                 x=x,
@@ -889,13 +1068,10 @@ def upload_3():
                 color=color,
                 facet_col=facet_col,
                 facet_row=facet_row,
-                
+                height=700,
             )
+        
 
-        
-        
-        
-        
         
         
         
@@ -908,7 +1084,7 @@ def upload_3():
         
         
         
-        return render_template('local_local_result.html',LL = local_explain.index())
+        return render_template('local_local_result.html',LL = local_explain2.index(), TA = 1)
         
         
     if 'DE' in dropdown_selection:
