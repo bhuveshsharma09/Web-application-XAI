@@ -32,82 +32,85 @@
 
 <body>
     {% include "navbar.html" %}
-    <div>
-        <div class="header-blue">
+
+
+
+
+
+    <div style="height: 592px;">
+        <div class="header-blue" style="height: 744px;padding-bottom: 123px;padding-top: -21px;margin-bottom: 19px;">
             <div class="container hero">
                 <div class="row">
                     <div class="col-12 col-lg-6 col-xl-5 offset-xl-1">
                         <h1 class="d-lg-flex align-items-lg-start">Permutation Importance</h1>
-                        <p>One of the most basic questions we might ask of a model is: What features have the biggest impact on predictions?
-
-This concept is called feature importance.
-
-There are multiple ways to measure feature importance. Some approaches answer subtly different versions of the question above. Other approaches have documented shortcomings.
-
-In this lesson, we'll focus on permutation importance. Compared to most other approaches, permutation importance is:
-
-fast to calculate,
-widely used and understood, and
-consistent with properties we would want a feature importance measure to have. </p><button class="btn btn-light btn-lg action-button" type="button">Learn More</button></div>
-                    <div
-                        class="col-md-5 col-lg-5 offset-lg-1 offset-xl-0 d-none d-lg-block phone-holder">{{PI}}</div>
+                        <p>Feature importance refers to techniques<br>that assign a <strong>score</strong> to <strong>input features </strong>based on how <strong>useful they are at predicting </strong>a target variable.<br></p><button class="btn btn-light btn-lg action-button" type="button">Learn More</button>
+                    </div>
+                    <div class="col-md-5 col-lg-5 offset-lg-1 offset-xl-0 d-none d-lg-block phone-holder" style="padding-top: 105px;">{{PI}}</div>
+                </div>
             </div>
         </div>
     </div>
-    </div>
-    <div>
-        <div class="header-blue" style="height: 514px;padding: 0px;">
+    <div style="height: 618px;">
+        <div class="header-blue" style="height: 664px;padding: 0px;padding-top: -30px;padding-bottom: 24px;margin-bottom: 4px;margin-top: 27px;">
             <div class="container hero">
                 <div class="row">
-                    <div class="col-md-5 col-lg-5 offset-lg-1 offset-xl-0 d-none d-lg-block phone-holder">
+                    <div class="col-md-5 col-lg-5 offset-lg-1 offset-xl-0 d-none d-lg-block phone-holder" style="padding: 21px;padding-top: 62px;padding-right: 32px;">
                         <img src="{{SH}}" alt="Chart" style="width: 554px;height: 513px;">
                     </div>
                     <div class="col-12 col-lg-6 col-xl-5 offset-xl-1">
                         <h1 class="d-lg-flex align-items-lg-start">Shapley Values</h1>
-                        <p>SHAP Values (an acronym from SHapley Additive exPlanations) break down a prediction to show the impact of each feature. Where could you use this?
-
-A model says a bank shouldn't loan someone money, and the bank is legally required to explain the basis for each loan rejection
-A healthcare provider wants to identify what factors are driving each patient's risk of some disease so they can directly address those risk factors with targeted health interventions</p><button class="btn btn-light btn-lg action-button" type="button">Learn More</button></div>
+                        <p>SHAP Values (an acronym from SHapley Additive exPlanations) break down a prediction to show the<br>impact of each feature.<br><br><br><br></p><button class="btn btn-light btn-lg action-button" type="button">Learn More</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div>
-        <div class="header-blue">
+    <div style="height: 630px;">
+        <div class="header-blue" style="height: 678px;padding-top: -6px;padding-bottom: 112px;">
             <div class="container hero">
-                <div class="row">
+                <div class="row" style="height: 528px;">
                     <div class="col-12 col-lg-6 col-xl-5 offset-xl-1">
                         <h1 class="d-lg-flex align-items-lg-start">Global Surrogate</h1>
-                        <p>A global surrogate model is an interpretable model that is trained to approximate the predictions of a black box model. We can draw conclusions about the black box model by interpreting the surrogate model. Solving machine learning interpretability by using more machine learning!
-
-</p><button class="btn btn-light btn-lg action-button" type="button">Learn More</button></div>
-                    <div
-                        class="col-md-5 col-lg-5 offset-lg-1 offset-xl-0 d-none d-lg-block phone-holder">
+                        <p>Mauris egestas tellus non ex condimentum, ac ullamcorper sapien dictum. Nam consequat neque quis sapien viverra convallis. In non tempus lorem. </p><button class="btn btn-light btn-lg action-button" type="button">Learn More</button>
+                    </div>
+                    <div class="col-md-5 col-lg-5 offset-lg-1 offset-xl-0 d-none d-lg-block phone-holder" style="padding-top: 55px;">
                         <img src="{{SM}}" alt="Chart" style="width: 800px;height: 513px;">
                     </div>
-
-            </div>
-        </div>
-    </div>
-    </div>
-    <div>
-        <div class="header-blue" style="height: 514px;padding: 0px;">
-            <div class="container hero">
-                <div class="row">
-                    <div class="col-md-5 col-lg-5 offset-lg-1 offset-xl-0 d-none d-lg-block phone-holder">{{ICE|safe}}</div>
-                    <div class="col-12 col-lg-6 col-xl-5 offset-xl-1">
-                        <h1 class="d-lg-flex align-items-lg-start">Individual Conditioning Explanation</h1>
-                        <p>While feature importance shows what variables most affect predictions, partial dependence plots show how a feature affects predictions.
-
-This is useful to answer questions like:
-
-Controlling for all other house features, what impact do longitude and latitude have on home prices? To restate this, how would similarly sized houses be priced in different areas?
-
-Are predicted health differences between two groups due to differences in their diets, or due to some other factor? </p><button class="btn btn-light btn-lg action-button" type="button">Learn More</button></div>
                 </div>
             </div>
         </div>
     </div>
+    <div style="height: 978px;">
+        <div class="header-blue" style="height: 838px;padding: 0px;padding-top: -10px;">
+            <div class="container hero">
+                <div class="row">
+                    <div class="col-md-5 col-lg-5 offset-lg-1 offset-xl-0 d-none d-lg-block phone-holder" style="padding-top: 95px;">{{ICE|safe}}</div>
+                    <div class="col-12 col-lg-6 col-xl-5 offset-xl-1">
+                        <h1 class="d-lg-flex align-items-lg-start">Individual Conditioning Explanation</h1>
+                        <p>This techniques helps to see the effect of two features on the prediction in a 3D plan.</p><button class="btn btn-light btn-lg action-button" type="button">Learn More</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <script src="static/js/jquery.min.js"></script>
     <script src="static/bootstrap/js/bootstrap.min.js"></script>
     <script src="static/js/bs-init.js"></script>

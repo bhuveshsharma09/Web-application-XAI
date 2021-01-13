@@ -32,68 +32,47 @@
 
 <body>
 {% include "navbar.html" %}
-<main class="page">
-        <section class="clean-block features">
-            <div class="container">
-                <div class="block-heading">
-                    <h2 class="text-info">Features</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo.</p>
-                </div>
-                <div class="row justify-content-center">
-                    <div class="col-md-5 feature-box"><i class="icon-star icon"></i>
-                        <h4>Bootstrap 4</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo.</p>
-                    </div>
-                    <div class="col-md-5 feature-box"><i class="icon-pencil icon"></i>
-                        <h4>Customizable</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo.</p>
-                    </div>
-                    <div class="col-md-5 feature-box"><i class="icon-screen-smartphone icon"></i>
-                        <h4>Responsive</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo.</p>
-                    </div>
-                    <div class="col-md-5 feature-box"><i class="icon-refresh icon"></i>
-                        <h4>All Browser Compatibility</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
+<main class="page"></main>
+    <h2 class="text-center text-info" style="height: 148px;padding-top: 32px;">Features of Platform</h2>
+    <div class="row justify-content-center" style="min-height: 37px;padding-top: 0px;padding-bottom: 69px;">
+        <div class="col-md-5 feature-box"><i class="icon-star icon"></i>
+            <h4>No coding required</h4>
+            <p>No coding required to explain data or AI mode. The user only has to upload Model and data files in .pkl format and select the preferred XAI method.</p>
+        </div>
+        <div class="col-md-5 feature-box"><i class="icon-pencil icon"></i>
+            <h4>Model Explanation</h4>
+            <p>Platform provides the user with local and global explanation techniques to explain the working of Ai model.</p>
+        </div>
+        <div class="col-md-5 feature-box"><i class="icon-screen-smartphone icon"></i>
+            <h4>Data Explanation</h4>
+            <p>Platform facilitates the user to upload data file and get insights from data and also try to find hidden patterns.</p>
+        </div>
+        <div class="col-md-5 feature-box"><i class="icon-refresh icon"></i>
+            <h4>What-if tool</h4>
+            <p>What-if tools helps the user to see the model's prediction for unknow or real world instance and explains the predict at the same time.</p>
+        </div>
+    </div>
     <footer class="page-footer dark">
         <div class="container">
             <div class="row">
                 <div class="col-sm-3">
                     <h5>Get started</h5>
                     <ul>
-                        <li><a href="#">Home</a></li>
-                        <li><a href="#">Sign up</a></li>
-                        <li><a href="#">Downloads</a></li>
+                        <li><a href="/data_explanation">Data Explanation</a></li>
+                        <li><a href="/model_explanation">Model Explanation</a></li>
+                        <li><a href="/features">Demo</a></li>
                     </ul>
                 </div>
                 <div class="col-sm-3">
-                    <h5>About us</h5>
+                    <h5>Research links&nbsp;</h5>
                     <ul>
-                        <li><a href="#">Company Information</a></li>
-                        <li><a href="#">Contact us</a></li>
-                        <li><a href="#">Reviews</a></li>
+                        <li><a href="https://shap.readthedocs.io/en/latest/">SHAP</a></li>
+                        <li><a href="https://docs.seldon.io/projects/alibi/en/stable/">Alibi</a></li>
+                        <li><a href="http://aix360.mybluemix.net/resources#guidance">IBM 360 AI&nbsp;</a></li>
                     </ul>
                 </div>
                 <div class="col-sm-3">
-                    <h5>Support</h5>
-                    <ul>
-                        <li><a href="#">FAQ</a></li>
-                        <li><a href="#">Help desk</a></li>
-                        <li><a href="#">Forums</a></li>
-                    </ul>
-                </div>
-                <div class="col-sm-3">
-                    <h5>Legal</h5>
-                    <ul>
-                        <li><a href="#">Terms of Service</a></li>
-                        <li><a href="#">Terms of Use</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                    </ul>
+                    <ul></ul>
                 </div>
             </div>
         </div>

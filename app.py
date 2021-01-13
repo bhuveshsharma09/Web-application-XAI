@@ -127,6 +127,39 @@ SHAP_plot = dash.Dash(__name__,
 
 
 
+what_plot = dash.Dash(__name__,
+    server=app,
+    url_base_pathname='/what_plot/')
+
+
+pca_3_fig = dash.Dash(__name__,
+    server=app,
+    url_base_pathname='/pca_3_fig/')
+
+
+
+tsne = dash.Dash(__name__,
+    server=app,
+    url_base_pathname='/tsne/')
+
+
+
+
+
+tsne.layout= html.Div([dcc.Graph(figure=fig)])
+
+
+
+
+
+
+pca_3_fig.layout= html.Div([dcc.Graph(figure=fig)])
+
+
+
+what_plot.layout= html.Div([dcc.Graph(figure=fig)])
+
+
 
 SHAP_plot.layout= html.Div([dcc.Graph(figure=fig)])
 
@@ -207,6 +240,12 @@ def _force_plot_html(*args):
     return html.Iframe(srcDoc=shap_html,
                        style={"width": "100%", "height": "400px", "border": 2})
 
+
+def _force_plot_html2(*args):
+    force_plot = shap.force_plot(*args, matplotlib=False)
+    shap_html = f"<head>{shap.getjs()}</head><body>{force_plot.html()}</body>"
+    return html.Iframe(srcDoc=shap_html,
+                       style={"width": "100%", "height": "400px", "border": 2})
 
 
 
@@ -370,18 +409,126 @@ def upload():
         return render_template('model_explanation_result.html',PI = PI, ICE = ICE , SH = "static/img/new_plot.png", SM = "static/img/new2_plot.png")
     if 'WI' in dropdown_selection:
         
+        
+       # print(res," resss")
+        
+       #
+        import dash
+        from dash.dependencies import Input, Output
+        import dash_table
+        import dash_core_components as dcc
+        import dash_html_components as html
+        
+        app = dash.Dash(__name__)
+        import pandas as pd
+        #should be X data
+        
+        
+        
+        
+            
         mean_list = []
         features = X_data.columns.tolist()
         for i in features:
             mean_list.append(round(X_data[i].mean()))
         
-        res = dict(zip(features, mean_list)) 
-       # print(res," resss")
+            
+        explainer = shap.TreeExplainer(model)
+        shap.initjs()
+        
+        params = features
+        
+        what_plot.layout = html.Div([
+            dash_table.DataTable(
+                id='table-editing-simple',
+                columns=(
+                    [{'id': 'Model', 'name': 'Model'}] +
+                    [{'id': p, 'name': p} for p in params]
+                ),
+                data=[
+                        
+                        
+                        dict(zip(features, mean_list)) 
+                    #dict(Model=i, **{param: mean_list[i] for param in params})
+                   # for i in range(0, len(mean_list))
+                ],
+                editable=True
+            ),
+            
+            html.Div(id='datatable-interactivity-container')
+        ])
+        
+        
+        @what_plot.callback(
+            Output('datatable-interactivity-container', "children"),
+            Input('table-editing-simple', 'data'),
+            Input('table-editing-simple', 'columns'))
+        def update_graphs(rows, columns):
+            df = pd.DataFrame(rows, columns=[c['name'] for c in columns])
+            print(rows)
+            
+            
+            #
+            rows = rows[0]
+            col = []
+            vvalue =[]
+            for key in rows:
+                print(key, '->', int(rows[key]))
+                col.append(key)
+                vvalue.append([int(rows[key])])
+                
+                
+            ik=dict(zip(col,vvalue))
+            instance = pd.DataFrame.from_dict(ik)
+                        
+                        
+            print('instancceee ', instance)
+            
+           
+            from shap.plots._force_matplotlib import draw_additive_plot
+
+            
+             
+            # explain the model's predictions using SHAP values(same syntax works for LightGBM, CatBoost, and scikit-learn models)
+            #explainer = shap.TreeExplainer(model)
+            shap_values = explainer.shap_values(instance)
+            shap.initjs()
+            
+            #plt.style.use("_classic_test_patch")
+           
+            ytu = model.predict(instance)
+            print('ress ' , ytu)
+            
+            
+            koko = _force_plot_html2(explainer.expected_value,
+                                         shap_values,instance)
+                                         
+           
+            #print('kkkk ',koko)
+           
+            print('Done')
+            
+            
+            return koko
+       #
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
         
         
         
-        
-        return render_template('local_explanation_result-1.html', res = res)
+        return render_template('local_explain_lime.html', LL = what_plot.index())
+    
     
     if 'LL' in dropdown_selection:
         None
@@ -454,14 +601,7 @@ def upload():
             from shap.plots._force_matplotlib import draw_additive_plot
 
             
-             #dt.score(X_test, predictions)
-            
-            
-            
-            # train XGBoost model
-            #X,y = shap.datasets.boston()
-            
-            #model = xgboost.train({"learning_rate": 0.01}, xgboost.DMatrix(X, label=y), 100)
+             
             ttt = X_data.loc[derived_virtual_selected_rows]
             # explain the model's predictions using SHAP values(same syntax works for LightGBM, CatBoost, and scikit-learn models)
             explainer = shap.TreeExplainer(model)
@@ -469,20 +609,14 @@ def upload():
             shap.initjs()
             
             plt.style.use("_classic_test_patch")
-            #force_plot = shap.force_plot(explainer.expected_value,
-                                     #    shap_values[0,:],
-                                    #     X_data.iloc[derived_virtual_selected_rows[0],:],
-                                    #     matplotlib=False)
-            
+           
             
             
             
             bubu = _force_plot_html(explainer.expected_value,
                                          shap_values,ttt)
                                          
-            # set show=False to force the figure to be returned
-            #force_plot_mpl = draw_additive_plot(force_plot.data, (20,3), show=False)
-            #return figure_to_html_img(force_plot_mpl)
+           
             
             shap_values = explainer.shap_values(X_data)
             #shap.force_plot(explainer.expected_value, shap_values, X_data)
@@ -491,7 +625,7 @@ def upload():
             
             
             
-            
+            print('bubu ',bubu)
             
             return bubu, explain_all
                     
@@ -930,7 +1064,7 @@ def upload_3():
                 
        # tips = px.data.tips()
         col_options = [dict(label=x, value=x) for x in data1.columns]
-        dimensions = ['color']
+        dimensions = ['Select dimension to be shown in colour']
                 
                 
         
@@ -950,7 +1084,7 @@ def upload_3():
         
         
         pca = PCA(n_components=2)
-        components = pca.fit_transform(scaled_data)
+        components = pca.fit_transform(data)
         
         pca3 = PCA(n_components=3)
         components_3 = pca3.fit_transform(scaled_data)
@@ -981,6 +1115,8 @@ def upload_3():
                     style={"width": "25%", "float": "left"},
                 ),
                 dcc.Graph(id="graph", style={"width": "75%", "display": "inline-block"}),
+                                html.H3("Principal Component Analysis (PCA) is an unsupervised linear transformation technique that is widely used across different fields, most prominently for feature extraction and dimensionality reduction. Other popular applications of PCA include exploratory data analyses and de-noising of signals in stock market trading, and the analysis of genome data and gene expression levels in the field of bioinformatics."),
+
             ]
         )
         
@@ -1021,8 +1157,315 @@ def upload_3():
         
         
         return render_template('pca_result.html',PCA = new_pca.index(), PCAA = new_pca.index())
+    
+    
+    
+    #######
+    #p3
+    if 'P3' in dropdown_selection:
+        input_list = request.form.to_dict()
+    
+    
+    
+        #data['some_key'] = "Some Value"
+        print('input values ', input_list)
+        print('input values ', type(input_list))
+        
+        
+        
+        target_name = input_list['lname']
+        
+        
+        
+        target_name = target_name.split("'")[1]
+        print('taget ss ',target_name)
+        print('taget ss ',type(target_name))
+        
+        
+        feature_name = input_list['features']
+        feature_name = feature_name.split(",")
+        uuu=[]
+        for i in range(0,len(feature_name)):
+            uuu.append(feature_name[i].split("'")[1])
+            
+        print('nuna yadav ', uuu)
+        
+        data = data1[uuu]
+        yw = data1[target_name]
+    
+        
+        #twrv = ThreadWithReturnValue(target=thread_function, args=(data1,data,yw))
+        #twrv.start()
+        #value = twrv.join()
+        #data_explanation_thread = threading.Thread()
+        #data_explanation_thread.start()
+        #value = data_explanation_thread.join()
+        #que = queue.Queue()
+        #value = que.get()
+        #print(value)
+        #value = thread_function(data1,data,yw)
+        
+        print("pca ki jai")
+        import plotly_express as px
+        import dash
+        import dash_html_components as html
+        import dash_core_components as dcc
+        from dash.dependencies import Input, Output
+                
+       # tips = px.data.tips()
+        col_options = [dict(label=x, value=x) for x in data1.columns]
+        dimensions = ['Select dimension to be shown in colour']
+                
+                
+        
+        
+        
+        
+        
+        
+        ###pca
+        from sklearn.preprocessing import StandardScaler
+        scaler = StandardScaler()
+        scaler.fit(data)
+        scaled_data = scaler.transform(data)
+        
+        import plotly.express as px
+        from sklearn.decomposition import PCA
+        
+        
+        pca = PCA(n_components=2)
+        components = pca.fit_transform(scaled_data)
+        
+        pca3 = PCA(n_components=3)
+        components_3 = pca3.fit_transform(data)
+        
+        total_var = pca.explained_variance_ratio_.sum() * 100
+        
+        fig_3 = px.scatter_3d(
+            components_3, x=0, y=1, z=2, color=yw,
+            title=f'Total Explained Variance: {total_var:.2f}%',
+            labels={'0': 'PC 1', '1': 'PC 2', '2': 'PC 3'}
+        )
+        
+        fig_3.show()
+        #need to upload csv only
+        
+        fig = px.scatter(components, x=0, y=1, color=yw)
+        fig.show()
+        ###
+        
+        pca_3_fig.layout = html.Div(
+            [
+                html.H1("Demo"),
+                html.Div(
+                    [
+                        html.P([d + ":", dcc.Dropdown(id=d, options=col_options)])
+                        for d in dimensions
+                    ],
+                    style={"width": "25%", "float": "left"},
+                ),
+                dcc.Graph(id="graph", style={"width": "75%", "display": "inline-block"}),
+                html.H3("Principal Component Analysis (PCA) is an unsupervised linear transformation technique that is widely used across different fields, most prominently for feature extraction and dimensionality reduction. Other popular applications of PCA include exploratory data analyses and de-noising of signals in stock market trading, and the analysis of genome data and gene expression levels in the field of bioinformatics."),
+            ]
+        )
+        
+        print('dimsum ', dimensions)
+        @pca_3_fig.callback(Output("graph", "figure"), [Input(d, "value") for d in dimensions])
+        def make_figure( color):
+            print('ccc ',color)
+            if color == None:
+                my_color = None
+            else:
+                my_color = data1[color]
+            return px.scatter_3d(
+                components_3,
+                x = 0,
+                y = 1,
+                z=2,
+                color=my_color,
+                
+                height=700,
+            )
+
+        
+        
+        
+        
+        
+        jj.layout = html.Div([dcc.Graph(figure=fig)])
+        qq.layout = html.Div([dcc.Graph(figure=fig_3)])
+        print("done")
+        
+        
+
+    
+        
+
+        
+        
+        
+        
+        
+        return render_template('pca_result.html',PCA = pca_3_fig.index(), PCAA = pca_3_fig.index())
+    
+    
+    
+    
+    #######
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    #t3
+    
     if 'TSNE' in dropdown_selection:
         None
+        input_list = request.form.to_dict()
+    
+    
+    
+        #data['some_key'] = "Some Value"
+        print('input values ', input_list)
+        print('input values ', type(input_list))
+        
+        
+        
+        target_name = input_list['lname']
+        
+        
+        
+        target_name = target_name.split("'")[1]
+        print('taget ss ',target_name)
+        print('taget ss ',type(target_name))
+        
+        
+        feature_name = input_list['features']
+        feature_name = feature_name.split(",")
+        uuu=[]
+        for i in range(0,len(feature_name)):
+            uuu.append(feature_name[i].split("'")[1])
+            
+        print('nuna yadav ', uuu)
+        
+        data = data1[uuu]
+        yw = data1[target_name]
+    
+        
+        #twrv = ThreadWithReturnValue(target=thread_function, args=(data1,data,yw))
+        #twrv.start()
+        #value = twrv.join()
+        #data_explanation_thread = threading.Thread()
+        #data_explanation_thread.start()
+        #value = data_explanation_thread.join()
+        #que = queue.Queue()
+        #value = que.get()
+        #print(value)
+        #value = thread_function(data1,data,yw)
+        
+        print("pca ki jai")
+        import plotly_express as px
+        import dash
+        import dash_html_components as html
+        import dash_core_components as dcc
+        from dash.dependencies import Input, Output
+                
+       # tips = px.data.tips()
+        col_options = [dict(label=x, value=x) for x in data1.columns]
+        dimensions = ['Select dimension to be shown in colour']
+                
+                
+        
+        
+        
+        
+        
+        
+        ###pca
+        from sklearn.preprocessing import StandardScaler
+        scaler = StandardScaler()
+        scaler.fit(data)
+        scaled_data = scaler.transform(data)
+        
+        from sklearn.manifold import TSNE
+        import plotly.express as px
+
+
+        tsne_algo = TSNE(n_components=3, random_state=0)
+        projections = tsne_algo.fit_transform(data, )
+        
+        
+        
+        fig_3 = px.scatter_3d(
+            projections, x=0, y=1, z=2, color=yw,
+            labels={'0': 'PC 1', '1': 'PC 2', '2': 'PC 3'}
+        )
+        
+        fig_3.show()
+        #need to upload csv only
+        
+        
+        
+        tsne.layout = html.Div(
+            [
+                html.H1("Demo"),
+                html.Div(
+                    [
+                        html.P([d + ":", dcc.Dropdown(id=d, options=col_options)])
+                        for d in dimensions
+                    ],
+                    style={"width": "25%", "float": "left"},
+                ),
+                dcc.Graph(id="graph", style={"width": "75%", "display": "inline-block"}),
+                html.H3("t-Distributed Stochastic Neighbor Embedding (t-SNE) is an unsupervised, non-linear technique primarily used for data exploration and visualizing high-dimensional data. In simpler terms, t-SNE gives you a feel or intuition of how the data is arranged in a high-dimensional space. It was developed by Laurens van der Maatens and Geoffrey Hinton in 2008."),
+            ]
+        )
+        
+        print('dimsum ', dimensions)
+        @tsne.callback(Output("graph", "figure"), [Input(d, "value") for d in dimensions])
+        def make_figure( color):
+            print('ccc ',color)
+            if color == None:
+                my_color = None
+            else:
+                my_color = data1[color]
+            return px.scatter_3d(
+                projections,
+                x = 0,
+                y = 1,
+                z=2,
+                color=my_color,
+                
+                height=700,
+            )
+
+        
+        
+        
+        
+       
+        
+        
+
+    
+        
+
+        
+        
+        
+        
+        
+        return render_template('pca_result.html',PCA = tsne.index(), PCAA = tsne.index())
+        
+        
+        
+        
+        
+        
             
         
         

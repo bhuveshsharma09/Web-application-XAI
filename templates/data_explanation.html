@@ -37,8 +37,8 @@
             <div class="container hero">
                 <div class="row">
                     <div class="col-12 col-lg-6 col-xl-5 offset-xl-1">
-                        <h1>Model Explanation</h1>
-                        <p>Platform provides the user with local and global explanation techniques to explain the working of Ai model. </p><button class="btn btn-light btn-lg action-button" type="button">Learn More</button></div>
+                        <h1>Data Explanation</h1>
+                        <p>Platform facilitates the user to upload data file and get insights from data and also try to find hidden patterns.</p><button class="btn btn-light btn-lg action-button" type="button">Learn More</button></div>
                     <div
                         class="col-md-5 col-lg-5 offset-lg-1 offset-xl-0 d-none d-lg-block phone-holder">
                         <div class="phone-mockup">
@@ -76,12 +76,12 @@
                     <h2>Steps</h2>
                     <br>
                     <ol>
-                      <li>Select the model .pkl file from local.</li>
-                      <li>Select the Feature (X) .pkl file.</li>
-                      <li>Select the labels (y) file.</li>
-                        <li>Selection explanation type.</li>
+                      <li>Select the local data (.csv) file.</li>
+                      <li>Select the explanation technique.</li>
+                      <li>Enter feature names if applicable.</li>
                         <li>Press Upload button.</li>
                     </ol>
+
 
 
 
@@ -99,36 +99,34 @@
 
 
 
-                    <form id="upload-form" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+                    <form id="upload-form" action="{{ url_for('upload_3') }}" method="POST" enctype="multipart/form-data">
                 <div class="illustration"><i class="icon ion-ios-paper-outline"></i></div>
-                <strong>1) Chose model file:</strong><br>
+                <strong>1) Chose data file:</strong><br>
                 <input   type="file" name="file"  accept="application/pdf/*" multiple>
                 <br>
-                     <strong>1) Chose x test file:</strong><br>
-                <input   type="file" name="file"  accept="application/pdf/*" multiple>
-                <br>
-                     <strong>1) Chose y test file:</strong><br>
-                <input   type="file" name="file"  accept="application/pdf/*" multiple>
-                <br>
+
                 <br>
                 <strong>Explanation Type</strong><br>
                 <select name="select1" class="form-control"> <!-- note the name -->
-                    <option value="GL">Global Explanation</option>
-                    <option value="LL">Local Explanation</option>
-                    <option value="WI">What-if</option>
-                    <option value="BD">Bias detection</option>
+                    <option value="PCA">PCA 2 Components</option>
+                    <option value="P3">PCA 3 Components</option>
+                    <option value="TSNE">T-SNE</option>
+                    <option value="PP">Data Exploration</option>
+                    <option value="DE">More..</option>
 
                 </select>
-                <br>
-                <br>
+<br>
+                        <strong><label for="features">Feature names </label></strong><br>
+                        <textarea id="features" name="features" rows="5" cols="60" placeholder="Enter features" value="Dummy"></textarea>
+                  <br>
+                        <br>
+                  <strong><label for="lname">Target Name</label></strong><br>
+                  <input type="text" id="lname" name="lname" placeholder="'Target'" value="Dummy"><br><br>
 
-                <strong>Model Type</strong><br>
-                <select name="select1" class="form-control"> <!-- note the name -->
-                    <option value="RR">Regression</option>
-                    <option value="RF">Random Forrest Regressor</option>
-                    <option value="CC">Classification</option>
 
-                </select>
+
+
+
                 <br>
                 <br>
                 <div class="form-group"><input type="submit" value="Upload" class="btn btn-primary btn-block" id="upload-button"></div>
@@ -147,7 +145,7 @@
             </div>
         </div>
     </div>
-   <footer class="page-footer dark">
+    <footer class="page-footer dark">
                     <div class="container">
                         <div class="row">
                             <div class="col-sm-3">
