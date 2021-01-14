@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html style="height: 576px;">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>XAI</title>
+    <link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Alfa+Slab+One">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Asap+Condensed">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Barlow+Condensed">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter:400,700">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700">
+    <link rel="stylesheet" href="static/fonts/ionicons.min.css">
+    <link rel="stylesheet" href="static/fonts/simple-line-icons.min.css">
+    <link rel="stylesheet" href="static/css/Article-Clean.css">
+    <link rel="stylesheet" href="static/css/Article-Dual-Column.css">
+    <link rel="stylesheet" href="static/css/Bootstrap-4---Full-Video-Background-v2.css">
+    <link rel="stylesheet" href="static/css/Drag-Drop-File-Input-Upload.css">
+    <link rel="stylesheet" href="static/css/Header-Blue.css">
+    <link rel="stylesheet" href="static/css/Header-Dark.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
+    <link rel="stylesheet" href="static/css/Login-Form-Dark.css">
+    <link rel="stylesheet" href="static/css/Registration-Form-with-Photo.css">
+    <link rel="stylesheet" href="static/css/smoothproducts.css">
+    <link rel="stylesheet" href="static/css/video-background.css">
+    <link rel="stylesheet" href="static/css/Video-Parallax-Background-v2.css">
+</head>
+
+<body>
+    {% include "navbar.html" %}
+    <div style="height: 592px;width: 1195px;">
+        <div class="header-blue" style="height: 744px;padding-bottom: 123px;padding-top: -21px;margin-bottom: 19px;">
+
+            <div class="container hero">
+                <div class="row">
+                    <div class="col-12 col-lg-6 col-xl-5 offset-xl-1">
+                        <h1 class="d-lg-flex align-items-lg-start">Tittle</h1>
+                        <p>Data</p><button class="btn btn-light btn-lg action-button" type="button">Learn More</button>
+                    </div>
+                    <div class="col-md-5 col-lg-5 offset-lg-1 offset-xl-0 d-none d-lg-block phone-holder" style="padding-top: 105px;min-height: 0px;height: 618px;">{{PI}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="height: 592px;width: 1195px;">
+        <div class="header-blue" style="height: 744px;padding-bottom: 123px;padding-top: -21px;margin-bottom: 19px;">
+            <div class="container hero">
+                <div class="row">
+                    <div class="col-12 col-lg-6 col-xl-5 offset-xl-1">
+                        <h1 class="d-lg-flex align-items-lg-start">Tittle</h1>
+                        <p>Data</p><button class="btn btn-light btn-lg action-button" type="button">Learn More</button>
+                    </div>
+                    <div class="col-md-5 col-lg-5 offset-lg-1 offset-xl-0 d-none d-lg-block phone-holder" style="padding-top: 105px;min-height: 0px;height: 618px;">{{SHAP_FI|safe}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="static/js/jquery.min.js"></script>
+    <script src="static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="static/js/bs-init.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
+    <script src="static/js/smoothproducts.min.js"></script>
+    <script src="static/js/theme.js"></script>
+    <script src="static/js/Video-Parallax-Background-v2.js"></script>
+</body>
+
+</html>

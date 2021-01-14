@@ -659,6 +659,63 @@ def upload():
         
     if 'BD' in dropdown_selection:
         None
+        
+      #FI  
+    if 'FI' in dropdown_selection:
+        None
+                
+        PI = permutation_importance(model,X_data,y_data)
+        
+        
+        
+        
+       
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        return render_template('global_feature_importance.html',PI = PI, SHAP_FI = PI )
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 #-----------------------------------------------------------------------------------------------------------
 
 
