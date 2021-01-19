@@ -145,6 +145,20 @@ tsne = dash.Dash(__name__,
 
 
 
+dashboard_ji = dash.Dash(__name__,
+    server=app,
+    url_base_pathname='/dashboard_ji/')
+
+
+
+
+
+dashboard_ji.layout= html.Div([dcc.Graph(figure=fig)])
+
+
+
+
+
 
 tsne.layout= html.Div([dcc.Graph(figure=fig)])
 
@@ -253,13 +267,22 @@ def _force_plot_html2(*args):
 @app.route("/ee")
 def ind_cond_exp(model_line,X_train,y_data):
     
-    from pdpbox.pdp import pdp_interact, pdp_interact_plot
-    X_features = ['bedrooms', 'bathrooms', 'sqft_living',
-       'sqft_lot', 'floors', 'waterfront', 'view', 'condition', 'grade',
-       'sqft_above', 'sqft_basement', 'yr_built', 'yr_renovated', 'zipcode',
-       'lat', 'long', 'sqft_living15', 'sqft_lot15']
+    
+    
+    empty_list = []
 
-    features = ['sqft_living', 'bathrooms']
+    for col in X_train.columns: 
+        print(col) 
+        empty_list.append(col)
+    
+    
+    
+    
+    
+    from pdpbox.pdp import pdp_interact, pdp_interact_plot
+    X_features = empty_list
+
+    features = empty_list[1:3]
     
     interaction = pdp_interact(
       model=model_line,
@@ -313,7 +336,14 @@ def upload():
     print('eer  0', request.form)
     dropdown_selection = str(request.form)
     dropdown_selection = dropdown_selection.split()
+    
+    
+    print(dropdown_selection)
+    model_type = dropdown_selection[3]
     dropdown_selection = dropdown_selection[1]
+    
+    
+    print('model type ji ',model_type)
     
     print(dropdown_selection, "  nuna bhai")
     
@@ -354,59 +384,138 @@ def upload():
         
     if 'GL' in dropdown_selection:
         
-        PI = permutation_importance(model,X_data,y_data)
+        
+        if 'RR' in model_type:
         
         
         
+            PI = permutation_importance(model,X_data,y_data)
+            
+            
+            row_to_show = 5
         
-        row_to_show = 5
+            data_for_prediction = X_data.iloc[row_to_show]
+            
+            
+            explainer = shap.Explainer(model, X_data, feature_names=X_data.columns)
+            shap_values = explainer.shap_values(X_data)
+        
+        
+            shap.summary_plot(shap_values, X_data)
+        
+            import matplotlib.pyplot as pl
+            pl.savefig('static/img/new_plot.png')
+            pl.close()
+        
+            ICE = ind_cond_exp(model,X_data,y_data)
+            
+            
+            #global surgat
+            from sklearn.tree import DecisionTreeRegressor
+            from sklearn.tree import plot_tree
+            
+            
+            predictions = model.predict(X_data)
+            dt = DecisionTreeRegressor(random_state = 100, max_depth=3)
+            # We fit the shallow tree to the matrix X and the predictions of the random forest model 
+            dt.fit(X_data, predictions)
+            
+            fig, ax = plt.subplots(figsize=(20, 10))
+            
+            
+            plot_tree(dt, feature_names=list(X_data.columns), precision=3, 
+                       filled=True, fontsize=12, impurity=True)
+            pl.savefig('static/img/new2_plot.png')
+            pl.close()
+            
     
-        data_for_prediction = X_data.iloc[row_to_show]
+            return render_template('model_explanation_result.html',PI = PI,
+                                   ICE = ICE , SH = "static/img/new_plot.png",
+                                   SM = "static/img/new2_plot.png")
         
         
-        explainer = shap.Explainer(model, X_data, feature_names=X_data.columns)
-        shap_values = explainer.shap_values(X_data)
+        if 'RF' in model_type:
+            PI = permutation_importance(model,X_data,y_data)
+            
+            explainer = shap.TreeExplainer(model, X_data, feature_names=X_data.columns)
+            shap_values = explainer.shap_values(X_data)
+        
+        
+            shap.summary_plot(shap_values, X_data)
+        
+            import matplotlib.pyplot as pl
+            pl.savefig('static/img/new_plot.png')
+            pl.close()
+        
+            ICE = ind_cond_exp(model,X_data,y_data)
+            
+            
+            #global surgat
+            from sklearn.tree import DecisionTreeRegressor
+            from sklearn.tree import plot_tree
+            
+            
+            predictions = model.predict(X_data)
+            dt = DecisionTreeRegressor(random_state = 100, max_depth=3)
+            # We fit the shallow tree to the matrix X and the predictions of the random forest model 
+            dt.fit(X_data, predictions)
+            
+            fig, ax = plt.subplots(figsize=(20, 10))
+            
+            
+            plot_tree(dt, feature_names=list(X_data.columns), precision=3, 
+                       filled=True, fontsize=12, impurity=True)
+            pl.savefig('static/img/new2_plot.png')
+            pl.close()
+            
     
+            return render_template('model_explanation_result.html',PI = PI,
+                                   ICE = ICE , SH = "static/img/new_plot.png",
+                                   SM = "static/img/new2_plot.png")
+            
+            
+            
+            
+            
+        if 'CC' in model_type:
+            PI = permutation_importance(model,X_data,y_data)
+            
+            
+            explainer = shap.KernelExplainer(model.predict_proba, X_data)
+            shap_values = explainer.shap_values(X_data)
+            
+            
+          
+        
+        
+            shap.summary_plot(shap_values, X_data)
+        
+            import matplotlib.pyplot as pl
+            pl.savefig('static/img/new_plot.png')
+            pl.close()
+        
+            #ICE = ind_cond_exp(model,X_data,y_data)
+            
+            
+            #global surgat
+            from sklearn.tree import DecisionTreeRegressor
+            from sklearn.tree import plot_tree
+            
+            
+            predictions = model.predict(X_data)
+            
+            
+            
+           
+            
     
-        shap.summary_plot(shap_values, X_data)
-    
-        import matplotlib.pyplot as pl
-        pl.savefig('static/img/new_plot.png')
-        pl.close()
-    
-        ICE = ind_cond_exp(model,X_data,y_data)
+            return render_template('model_explanation_result_classification.html',PI = PI,
+                                   SH = "static/img/new_plot.png"
+                                   )
+            
         
         
         
-        #global surgat
-        from sklearn.tree import DecisionTreeRegressor
-        from sklearn.tree import plot_tree
-        
-        
-        predictions = model.predict(X_data)
-        dt = DecisionTreeRegressor(random_state = 100, max_depth=3)
-        # We fit the shallow tree to the matrix X and the predictions of the random forest model 
-        dt.fit(X_data, predictions)
-        
-        fig, ax = plt.subplots(figsize=(20, 10))
-        
-        
-        plot_tree(dt, feature_names=list(X_data.columns), precision=3, 
-                   filled=True, fontsize=12, impurity=True)
-        pl.savefig('static/img/new2_plot.png')
-        pl.close()
-        
-       
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        return render_template('model_explanation_result.html',PI = PI, ICE = ICE , SH = "static/img/new_plot.png", SM = "static/img/new2_plot.png")
     if 'WI' in dropdown_selection:
         
         
@@ -661,11 +770,84 @@ def upload():
         None
         
       #FI  
-    if 'FI' in dropdown_selection:
-        None
-                
-        PI = permutation_importance(model,X_data,y_data)
+    if 'DB' in dropdown_selection:     
         
+      #  if 'CC' in model_type:
+         #   from explainerdashboard import ClassifierExplainer, ExplainerDashboard
+          #  ExplainerDashboard(ClassifierExplainer(model, X_data, y_data)).run()
+        
+        if 'RF' in model_type:
+            import threading
+            import time
+            
+            def dashboard_exp(model, X_data, y_data):
+                import dash_bootstrap_components as dbc
+
+                from explainerdashboard import RegressionExplainer, ExplainerDashboard
+                ExplainerDashboard(RegressionExplainer(model, X_data, y_data),bootstrap=dbc.themes.SANDSTONE,
+                                   importances=True,
+                        model_summary=False,
+                        contributions=True,
+                        
+                        whatif=True,
+                        shap_dependence=False,
+                        shap_interaction=False,
+                        decision_trees=False,
+                        
+                        hide_whatifindexselector=True,
+                        hide_whatifprediction=True,
+                        hide_inputeditor=False,
+                        hide_whatifcontributiongraph=False, 
+                        hide_whatifcontributiontable=True, 
+                        hide_whatifpdp=False,
+                        
+                        hide_predindexselector=False, 
+                        hide_predictionsummary=True,
+                        hide_contributiongraph=False, 
+                        hide_pdp=False, 
+                        hide_contributiontable=True,
+                        
+                        hide_dropna=True,
+                        hide_range=True,
+                         hide_depth=True,
+                         hide_sort=True,
+                         hide_sample=True, # hide sample size input on pdp component
+                        hide_gridlines=True, # hide gridlines on pdp component
+                        hide_gridpoints=True,
+                        
+                        
+                        
+                         hide_cats_sort=True, # hide the sorting option for categorical features
+                        hide_cutoff=True, # hide cutoff selector on classification components
+                        hide_percentage=True, # hide percentage toggle on classificaiton components
+                        hide_log_x=True, # hide x-axis logs toggle on regression plots
+                        hide_log_y=True, # hide y-axis logs toggle on regression plots
+                        hide_ratio=True, # hide the residuals type dropdown
+                        hide_points=True, # hide the show violin scatter markers toggle
+                        hide_winsor=True, # hide the winsorize input
+                        hide_wizard=True, # hide the wizard toggle in lift curve component
+                        hide_star_explanation=True,
+                        
+                        
+                        ).run()
+            
+            t1 = threading.Thread(target=dashboard_exp, args=(model, X_data, y_data)) 
+              
+            
+            t1.start() 
+            
+                      
+                
+                
+                
+            return '''<H2>
+         Please follow this link <a href="http://localhost:8050/">LINK</a> 
+      </H2>'''
+                #dashboard_ji
+            #app = db.flask_server()
+            
+            
+            
         
         
         
@@ -679,7 +861,6 @@ def upload():
         
         
         
-        return render_template('global_feature_importance.html',PI = PI, SHAP_FI = PI )
         
         
         
