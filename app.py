@@ -801,7 +801,7 @@ def upload():
                         hide_whatifcontributiontable=True, 
                         hide_whatifpdp=False,
                         
-                        hide_predindexselector=False, 
+                        hide_predindexselector=True, 
                         hide_predictionsummary=True,
                         hide_contributiongraph=False, 
                         hide_pdp=False, 
