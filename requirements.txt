@@ -22,3 +22,5 @@ matplotlib==3.2.1
 plotly==4.14.1
 plotly-express==0.4.1
 mpld3==0.5.2
+eli5==0.10.1
+pycebox==0.0.1
