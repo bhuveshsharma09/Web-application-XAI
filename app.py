@@ -30,7 +30,8 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 
-
+global id_name
+id_name = 1
 
 
 
@@ -150,13 +151,7 @@ dashboard_ji = dash.Dash(__name__,
     url_base_pathname='/dashboard_ji/')
 
 
-
-
-
 dashboard_ji.layout= html.Div([dcc.Graph(figure=fig)])
-
-
-
 
 
 
@@ -165,35 +160,15 @@ tsne.layout= html.Div([dcc.Graph(figure=fig)])
 
 
 
-
-
 pca_3_fig.layout= html.Div([dcc.Graph(figure=fig)])
-
-
-
 what_plot.layout= html.Div([dcc.Graph(figure=fig)])
-
 
 
 SHAP_plot.layout= html.Div([dcc.Graph(figure=fig)])
 
 
 
-
-
-
 table_plot.layout= html.Div([dcc.Graph(figure=fig)])
-
-
-
-
-
-
-
-
-
-
-
 
 local_explain2.layout= html.Div([dcc.Graph(figure=fig)])
 
@@ -346,6 +321,8 @@ def upload():
     print('model type ji ',model_type)
     
     print(dropdown_selection, "  nuna bhai")
+    
+    global id_name
     
     
     target = 'images/'
@@ -547,6 +524,13 @@ def upload():
         
         params = features
         
+        id_name_str = "my_graph"+str(id_name)
+        print('---------------',id_name_str)
+        id_name = id_name+1
+        
+        
+        
+        
         what_plot.layout = html.Div([
             dash_table.DataTable(
                 id='table-editing-simple',
@@ -564,12 +548,12 @@ def upload():
                 editable=True
             ),
             
-            html.Div(id='datatable-interactivity-container')
+            html.Div(id=id_name_str)
         ])
         
         
         @what_plot.callback(
-            Output('datatable-interactivity-container', "children"),
+            Output(id_name_str, "children"),
             Input('table-editing-simple', 'data'),
             Input('table-editing-simple', 'columns'))
         def update_graphs(rows, columns):
@@ -648,6 +632,14 @@ def upload():
         import dash_core_components as dcc
         import dash_html_components as html
         import pandas as pd
+        
+        
+        id_name_str = "my_graph"+str(id_name)
+        print('---------------',id_name_str)
+        id_name = id_name+1
+        
+        
+        
         print('in LL')
         # make graph===============================================================
         table_plot.layout = html.Div([
@@ -670,7 +662,7 @@ def upload():
                 page_current= 0,
                 page_size= 10,
             ),
-            html.Div(id='datatable-interactivity-container')
+            html.Div(id=id_name_str)
         ])
             
         print('miod LL')
@@ -682,7 +674,7 @@ def upload():
             
             
         @table_plot.callback(
-            Output('datatable-interactivity-container', "children"),
+            Output(id_name_str, "children"),
             Input('datatable-interactivity', "derived_virtual_data"),
             Input('datatable-interactivity', "derived_virtual_selected_rows"))
         def update_graphs(rows, derived_virtual_selected_rows):
@@ -1199,7 +1191,7 @@ def upload_3():
     dropdown_selection = dropdown_selection[1]
     
     print(dropdown_selection, "  nuna bhai")
-    
+    global id_name
     
     
     
@@ -1342,6 +1334,13 @@ def upload_3():
         fig.show()
         ###
         
+        
+        global id_name
+        id_name_str = "my_graph"+str(id_name)
+        print('---------------',id_name_str)
+        id_name = id_name+1
+        
+        
         new_pca.layout = html.Div(
             [
                 html.H1("Demo"),
@@ -1352,14 +1351,14 @@ def upload_3():
                     ],
                     style={"width": "25%", "float": "left"},
                 ),
-                dcc.Graph(id="graph", style={"width": "75%", "display": "inline-block"}),
+                dcc.Graph(id=id_name_str, style={"width": "75%", "display": "inline-block"}),
                                 html.H3("Principal Component Analysis (PCA) is an unsupervised linear transformation technique that is widely used across different fields, most prominently for feature extraction and dimensionality reduction. Other popular applications of PCA include exploratory data analyses and de-noising of signals in stock market trading, and the analysis of genome data and gene expression levels in the field of bioinformatics."),
 
             ]
         )
         
         print('dimsum ', dimensions)
-        @new_pca.callback(Output("graph", "figure"), [Input(d, "value") for d in dimensions])
+        @new_pca.callback(Output(id_name_str, "figure"), [Input(d, "value") for d in dimensions])
         def make_figure( color):
             print('ccc ',color)
             if color == None:
@@ -1479,6 +1478,15 @@ def upload_3():
         
         total_var = pca.explained_variance_ratio_.sum() * 100
         
+#        global id_name
+        id_name_str = "my_graph"+str(id_name)
+        print('---------------',id_name_str)
+        id_name = id_name+1
+        
+        
+        
+        
+        
         fig_3 = px.scatter_3d(
             components_3, x=0, y=1, z=2, color=yw,
             title=f'Total Explained Variance: {total_var:.2f}%',
@@ -1502,13 +1510,13 @@ def upload_3():
                     ],
                     style={"width": "25%", "float": "left"},
                 ),
-                dcc.Graph(id="graph", style={"width": "75%", "display": "inline-block"}),
+                dcc.Graph(id=id_name_str, style={"width": "75%", "display": "inline-block"}),
                 html.H3("Principal Component Analysis (PCA) is an unsupervised linear transformation technique that is widely used across different fields, most prominently for feature extraction and dimensionality reduction. Other popular applications of PCA include exploratory data analyses and de-noising of signals in stock market trading, and the analysis of genome data and gene expression levels in the field of bioinformatics."),
             ]
         )
         
         print('dimsum ', dimensions)
-        @pca_3_fig.callback(Output("graph", "figure"), [Input(d, "value") for d in dimensions])
+        @pca_3_fig.callback(Output(id_name_str, "figure"), [Input(d, "value") for d in dimensions])
         def make_figure( color):
             print('ccc ',color)
             if color == None:
@@ -1636,6 +1644,12 @@ def upload_3():
         tsne_algo = TSNE(n_components=3, random_state=0)
         projections = tsne_algo.fit_transform(data, )
         
+#        global id_name
+        id_name_str = "my_graph"+str(id_name)
+        print('---------------',id_name_str)
+        id_name = id_name+1
+        
+        
         
         
         fig_3 = px.scatter_3d(
@@ -1658,13 +1672,13 @@ def upload_3():
                     ],
                     style={"width": "25%", "float": "left"},
                 ),
-                dcc.Graph(id="graph", style={"width": "75%", "display": "inline-block"}),
+                dcc.Graph(id=id_name_str, style={"width": "75%", "display": "inline-block"}),
                 html.H3("t-Distributed Stochastic Neighbor Embedding (t-SNE) is an unsupervised, non-linear technique primarily used for data exploration and visualizing high-dimensional data. In simpler terms, t-SNE gives you a feel or intuition of how the data is arranged in a high-dimensional space. It was developed by Laurens van der Maatens and Geoffrey Hinton in 2008."),
             ]
         )
         
         print('dimsum ', dimensions)
-        @tsne.callback(Output("graph", "figure"), [Input(d, "value") for d in dimensions])
+        @tsne.callback(Output(id_name_str, "figure"), [Input(d, "value") for d in dimensions])
         def make_figure( color):
             print('ccc ',color)
             if color == None:
@@ -1715,8 +1729,25 @@ def upload_3():
         import dash_core_components as dcc
         from dash.dependencies import Input, Output
         
+        
+        id_name_str = "my_graph"+str(id_name)
+        
+        print('---------------',id_name_str)
+        
+        id_name = id_name+1
+        
+        
+        
+        
+        
+        
         col_options = [dict(label=x, value=x) for x in data1.columns]
         dimensions = ["x", "y", "color", "facet_col", "facet_row"]
+        
+        
+        
+
+        
         
       
         
@@ -1730,13 +1761,17 @@ def upload_3():
                     ],
                     style={"width": "25%", "float": "left"},
                 ),
-                dcc.Graph(id="graph", style={"width": "75%", "display": "inline-block"}),
+                dcc.Graph(id=id_name_str, style={"width": "75%", "display": "inline-block"}),
             ]
         )
         
         
-        @local_explain2.callback(Output("graph", "figure"), [Input(d, "value") for d in dimensions])
+        @local_explain2.callback(Output(id_name_str, "figure"), [Input(d, "value") for d in dimensions])
         def make_figure(x, y, color, facet_col, facet_row):
+            ctx = dash.callback_context
+            
+            
+            print('-----------',ctx)
             if x == None:
                 x = data1[data1.columns[2]]
             if y == None:
