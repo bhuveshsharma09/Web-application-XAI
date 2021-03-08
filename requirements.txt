@@ -21,3 +21,4 @@ dask==2.5.2
 matplotlib==3.2.1
 plotly==4.14.1
 plotly-express==0.4.1
+mpld3==0.5.2
